@@ -1,0 +1,18 @@
+# E-Commerce Sales Analysis Case Study
+
+## Scenario
+An e-commerce company stores data about customers, products, orders, and order items in PostgreSQL.
+
+## Tables
+- customers
+- products
+- orders
+- order_items
+
+## Questions
+1. Display how many orders each customer has placed and total amount spent.
+2. Find which city generated the highest sales.
+3. Find average price and total sales per category.
+4. Display customers who spent more than ₹50000.
+5. Show order summary of last 10 months.
+6. Identify most sold product by quantity.
