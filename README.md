@@ -1,7 +1,7 @@
-# ecommerce-sales-analysis-sql-
+# ecommerce-sales-analysis-sql
 SQL-based E-Commerce Sales Analysis project using PostgreSQL. Includes database schema creation, JOINs, aggregate functions, customer spending analysis, category-wise sales insights, and business reporting queries.
 
-
+This project focuses on solving real-world business problems using SQL and PostgreSQL.
 # E-Commerce Sales Analysis using PostgreSQL
 
 ## Project Overview
