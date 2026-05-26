@@ -1,0 +1,196 @@
+-- E-Commerce Sales Analysis using PostgreSQL
+-- =========================================
+
+-- =========================================
+-- Create Tables
+-- =========================================
+
+CREATE TABLE customers (
+cust_id SERIAL PRIMARY KEY,
+name VARCHAR(50),
+city VARCHAR(50),
+email VARCHAR(50)
+);
+
+CREATE TABLE products (
+prod_id INT PRIMARY KEY,
+name VARCHAR(50),
+category VARCHAR(50),
+price NUMERIC(10,2)
+);
+
+CREATE TABLE orders (
+order_id INT PRIMARY KEY,
+cust_id INT REFERENCES customers(cust_id),
+order_date DATE
+);
+
+CREATE TABLE order_items (
+order_item_id INT PRIMARY KEY,
+order_id INT REFERENCES orders(order_id),
+prod_id INT REFERENCES products(prod_id),
+quantity INT
+);
+
+-- =========================================
+-- Insert Data
+-- =========================================
+
+INSERT INTO customers(name, city, email)
+VALUES
+('Amit Sharma', 'Delhi', '[amit.sharma@example.com](mailto:amit.sharma@example.com)'),
+('Priya Verma', 'Mumbai', '[priya.verma@example.com](mailto:priya.verma@example.com)'),
+('Ravi Kumar', 'Bangalore', '[ravi.kumar@example.com](mailto:ravi.kumar@example.com)'),
+('Neha Singh', 'Kolkata', '[neha.singh@example.com](mailto:neha.singh@example.com)'),
+('Sahil Patel', 'Ahmedabad', '[sahil.patel@example.com](mailto:sahil.patel@example.com)');
+
+INSERT INTO products(prod_id, name, category, price)
+VALUES
+(11, 'Laptop', 'Electronics', 55000.00),
+(12, 'Mobile', 'Electronics', 20000.00),
+(13, 'Headphones', 'Accessories', 2500.00),
+(14, 'Table', 'Furniture', 8000.00),
+(15, 'Chair', 'Furniture', 3500.00);
+
+INSERT INTO orders(order_id, cust_id, order_date)
+VALUES
+(100, 1, '2025-10-20'),
+(200, 2, '2025-10-21'),
+(300, 3, '2025-10-22'),
+(400, 4, '2025-10-23'),
+(500, 5, '2025-10-24');
+
+INSERT INTO order_items(order_item_id, order_id, prod_id, quantity)
+VALUES
+(10, 100, 11, 2),
+(20, 200, 12, 1),
+(30, 300, 13, 3),
+(40, 400, 14, 1),
+(50, 500, 15, 4);
+
+-- =========================================
+-- Display Tables
+-- =========================================
+
+SELECT * FROM customers;
+SELECT * FROM products;
+SELECT * FROM orders;
+SELECT * FROM order_items;
+
+-- =========================================
+-- Question 1
+-- Display how many orders each customer
+-- has placed and the total amount spent
+-- =========================================
+
+SELECT
+c.name AS customer_name,
+COUNT(o.order_id) AS total_orders,
+SUM(oi.quantity * p.price) AS total_amount_spent
+FROM customers c
+JOIN orders o
+ON c.cust_id = o.cust_id
+JOIN order_items oi
+ON oi.order_id = o.order_id
+JOIN products p
+ON p.prod_id = oi.prod_id
+GROUP BY c.name;
+
+-- =========================================
+-- Question 2
+-- Find which city has generated
+-- the highest total sales
+-- =========================================
+
+SELECT
+c.city,
+SUM(oi.quantity * p.price) AS highest_sales
+FROM customers c
+JOIN orders o
+ON c.cust_id = o.cust_id
+JOIN order_items oi
+ON oi.order_id = o.order_id
+JOIN products p
+ON p.prod_id = oi.prod_id
+GROUP BY c.city
+ORDER BY highest_sales DESC
+LIMIT 1;
+
+-- =========================================
+-- Question 3
+-- Find the average price and total sales
+-- per product category
+-- =========================================
+
+SELECT
+p.category,
+AVG(p.price) AS average_price,
+SUM(oi.quantity * p.price) AS total_sales_per_product
+FROM customers c
+JOIN orders o
+ON c.cust_id = o.cust_id
+JOIN order_items oi
+ON oi.order_id = o.order_id
+JOIN products p
+ON p.prod_id = oi.prod_id
+GROUP BY p.category;
+
+-- =========================================
+-- Question 4
+-- Display customers who have spent
+-- more than ₹50000 in total
+-- =========================================
+
+SELECT
+c.name AS customer_name,
+SUM(oi.quantity * p.price) AS spent_by_customer
+FROM customers c
+JOIN orders o
+ON c.cust_id = o.cust_id
+JOIN order_items oi
+ON oi.order_id = o.order_id
+JOIN products p
+ON p.prod_id = oi.prod_id
+GROUP BY c.name
+HAVING SUM(oi.quantity * p.price) > 50000;
+
+-- =========================================
+-- Question 5
+-- Show the summary of orders placed
+-- in the last 10 months
+-- =========================================
+
+SELECT
+COUNT(DISTINCT o.order_id) AS total_orders,
+SUM(p.price * oi.quantity) AS total_sales,
+AVG(p.price * oi.quantity) AS average_order_value
+FROM customers c
+JOIN orders o
+ON c.cust_id = o.cust_id
+JOIN order_items oi
+ON oi.order_id = o.order_id
+JOIN products p
+ON p.prod_id = oi.prod_id
+WHERE o.order_date >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '10 month');
+
+-- =========================================
+-- Question 6
+-- Identify the most sold product
+-- by quantity
+-- =========================================
+
+SELECT
+p.prod_id,
+p.name,
+p.category,
+SUM(oi.quantity) AS total_quantity_sold
+FROM customers c
+JOIN orders o
+ON c.cust_id = o.cust_id
+JOIN order_items oi
+ON oi.order_id = o.order_id
+JOIN products p
+ON p.prod_id = oi.prod_id
+GROUP BY p.prod_id, p.name, p.category
+ORDER BY total_quantity_sold DESC
+LIMIT 1;
