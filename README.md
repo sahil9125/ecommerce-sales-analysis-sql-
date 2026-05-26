@@ -64,7 +64,7 @@ This project demonstrates SQL-based sales analysis for an e-commerce company usi
 
 This query displays the total number of orders placed by each customer and the total amount spent.
 
-![Customer Orders and Total Amount](screenshots/query1_customer_spending.png)
+![Customer Orders and Total Amount](1.Query.png)
 ## Author
 
 Sahil Upadhyay
